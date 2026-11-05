@@ -1,0 +1,57 @@
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: terraform-web-app-template
+  title: Terraform Web App (Kubernetes)
+  description: Opens a pull request that adds a web-app module call to the terraform-k8s-lab repo.
+spec:
+  owner: platform-team
+  type: service
+
+  parameters:
+    - title: App details
+      required:
+        - app_name
+        - namespace
+      properties:
+        app_name:
+          title: App Name
+          type: string
+          description: Lowercase letters, numbers, and hyphens (e.g., payments)
+          pattern: '^[a-z0-9-]+$'
+        namespace:
+          title: Namespace
+          type: string
+          description: Kubernetes namespace for the app (e.g., team-c)
+          pattern: '^[a-z0-9-]+$'
+        replicas:
+          title: Replicas
+          type: number
+          default: 2
+          minimum: 1
+          maximum: 10
+
+  steps:
+    - id: fetch
+      name: Generate Terraform file
+      action: fetch:template
+      input:
+        url: ./skeleton
+        values:
+          app_name: ${{ parameters.app_name }}
+          namespace: ${{ parameters.namespace }}
+          replicas: ${{ parameters.replicas }}
+
+    - id: pr
+      name: Open pull request
+      action: publish:github:pull-request
+      input:
+        repoUrl: github.com?owner=alexokoronkwo&repo=terraform-k8s-lab
+        branchName: add-${{ parameters.app_name }}
+        title: Add ${{ parameters.app_name }} web app
+        description: Adds the ${{ parameters.app_name }} app in namespace ${{ parameters.namespace }} with ${{ parameters.replicas }} replicas.
+
+  output:
+    links:
+      - title: Pull request
+        url: ${{ steps.pr.output.remoteUrl }}

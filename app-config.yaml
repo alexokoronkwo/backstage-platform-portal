@@ -91,3 +91,8 @@ catalog:
       target: ../../examples/platform.yaml
       rules:
         - allow: [Group, System]
+
+    - type: file
+      target: ../../templates/terraform-web-app-template/template.yaml
+      rules:
+        - allow: [Template]
