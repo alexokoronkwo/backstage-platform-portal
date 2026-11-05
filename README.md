@@ -53,6 +53,16 @@ The token is read from the environment (`${GITHUB_TOKEN}` in `app-config.yaml`).
 
 ## What I would add next
 
-- Terraform: have the template open a pull request with infrastructure code
 - TechDocs for each generated service
 - Real authentication (GitHub OAuth) instead of Guest
+
+## Terraform web app template
+
+The **Terraform Web App (Kubernetes)** template connects this portal to [terraform-k8s-lab](https://github.com/alexokoronkwo/terraform-k8s-lab):
+
+1. A developer enters an app name, namespace, and replica count.
+2. The template generates an `<app-name>.tf` file that calls the reusable `web-app` module.
+3. It opens a **pull request** against `terraform-k8s-lab` for review.
+4. After the merge, `terraform apply` creates the namespace, deployment, and service on the Kubernetes cluster.
+
+The target repository is set in `templates/terraform-web-app-template/template.yaml` (`repoUrl`). Change it to point at your own fork.
